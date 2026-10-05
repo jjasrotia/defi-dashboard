@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getAuthenticatedUser } from "@/lib/auth-session";
-import { prisma } from "@/lib/prisma";
+import { getPrismaClient } from "@/lib/prisma";
 
 const transactionInput = z.object({
   type: z.enum(["swap", "supply", "withdraw", "reward"]),
@@ -21,6 +21,7 @@ export async function GET(request: Request) {
   if (!user) return Response.json({ error: "Unauthorized." }, { status: 401 });
 
   try {
+    const prisma = getPrismaClient();
     const transactions = await prisma.portfolioTransaction.findMany({
       where: { userId: user.id },
       orderBy: { occurredAt: "desc" },
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const prisma = getPrismaClient();
     const transaction = await prisma.portfolioTransaction.create({
       data: { ...parsed.data, userId: user.id },
     });

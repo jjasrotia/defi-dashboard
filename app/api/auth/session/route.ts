@@ -28,7 +28,8 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    const { prisma } = await import("@/lib/prisma");
+    const { getPrismaClient } = await import("@/lib/prisma");
+    const prisma = getPrismaClient();
     await prisma.authSession.deleteMany({ where: { tokenHash: hashAuthToken(token) } });
     return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
   } catch {

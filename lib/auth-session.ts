@@ -14,7 +14,8 @@ export async function getAuthenticatedUser(request: Request): Promise<TokenUser 
 
   if (process.env.AUTH_USE_DATABASE !== "true") return claims;
 
-  const { prisma } = await import("@/lib/prisma");
+  const { getPrismaClient } = await import("@/lib/prisma");
+  const prisma = getPrismaClient();
   const session = await prisma.authSession.findUnique({
     where: { tokenHash: hashAuthToken(token) },
     select: { expiresAt: true, user: { select: { id: true, username: true, role: true } } },

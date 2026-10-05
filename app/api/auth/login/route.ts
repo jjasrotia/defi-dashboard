@@ -22,7 +22,8 @@ export async function POST(request: Request) {
       });
     }
 
-    const { prisma } = await import("@/lib/prisma");
+    const { getPrismaClient } = await import("@/lib/prisma");
+    const prisma = getPrismaClient();
     let user = await prisma.user.findUnique({ where: { username: parsed.data.username } });
 
     if (!user) {
